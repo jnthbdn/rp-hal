@@ -289,9 +289,14 @@ pub fn setup_pll_blocking<D: PhaseLockedLoopDevice>(
     resets: &mut RESETS,
 ) -> Result<PhaseLockedLoop<Locked, D>, Error> {
     // Before we touch PLLs, switch sys and ref cleanly away from their aux sources.
-    nb::block!(clocks.system_clock.reset_source_await()).unwrap();
+    nb::block!(clocks.system_clock.as_mut().unwrap().reset_source_await()).unwrap();
 
-    nb::block!(clocks.reference_clock.reset_source_await()).unwrap();
+    nb::block!(clocks
+        .reference_clock
+        .as_mut()
+        .unwrap()
+        .reset_source_await())
+    .unwrap();
 
     let initialized_pll =
         PhaseLockedLoop::new(dev, xosc_frequency.convert(), config)?.initialize(resets);

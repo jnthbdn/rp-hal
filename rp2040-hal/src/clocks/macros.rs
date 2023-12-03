@@ -19,7 +19,7 @@ macro_rules! clocks {
                 clocks: CLOCKS,
                 $(
                     #[doc = "`" $name "` field"]
-                    pub [<$name:snake>]: $name,
+                    pub [<$name:snake>]: Option<$name>,
                 )*
             }
 
@@ -35,10 +35,10 @@ macro_rules! clocks {
                     ClocksManager {
                         clocks: clocks_block,
                         $(
-                            [<$name:snake>]: $name {
+                            [<$name:snake>]: Some($name {
                                 shared_dev: shared_clocks,
                                 frequency: $init_freq.Hz(),
-                            },
+                            }),
                         )*
                     }
                 }

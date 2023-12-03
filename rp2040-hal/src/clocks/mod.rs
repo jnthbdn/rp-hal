@@ -432,27 +432,40 @@ impl ClocksManager {
         // Configure clocks
         // CLK_REF = XOSC (12MHz) / 1 = 12MHz
         self.reference_clock
+            .as_mut()
+            .unwrap()
             .configure_clock(xosc, xosc.get_freq())?;
 
         // CLK SYS = PLL SYS (125MHz) / 1 = 125MHz
         self.system_clock
+            .as_mut()
+            .unwrap()
             .configure_clock(pll_sys, pll_sys.get_freq())?;
 
         // CLK USB = PLL USB (48MHz) / 1 = 48MHz
         self.usb_clock
+            .as_mut()
+            .unwrap()
             .configure_clock(pll_usb, pll_usb.get_freq())?;
 
         // CLK ADC = PLL USB (48MHZ) / 1 = 48MHz
         self.adc_clock
+            .as_mut()
+            .unwrap()
             .configure_clock(pll_usb, pll_usb.get_freq())?;
 
         // CLK RTC = PLL USB (48MHz) / 1024 = 46875Hz
-        self.rtc_clock.configure_clock(pll_usb, 46875u32.Hz())?;
+        self.rtc_clock
+            .as_mut()
+            .unwrap()
+            .configure_clock(pll_usb, 46875u32.Hz())?;
 
         // CLK PERI = clk_sys. Used as reference clock for Peripherals. No dividers so just select and enable
         // Normally choose clk_sys or clk_usb
-        self.peripheral_clock
-            .configure_clock(&self.system_clock, self.system_clock.freq())
+        self.peripheral_clock.as_mut().unwrap().configure_clock(
+            self.system_clock.as_ref().unwrap(),
+            self.system_clock.as_ref().unwrap().freq(),
+        )
     }
 
     /// Configure the clocks staying ON during deep-sleep.
